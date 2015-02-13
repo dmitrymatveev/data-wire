@@ -8,7 +8,7 @@
         "layer",
         "abstraction"
     ],
-    "main": "index.js",
+    "main": "lib/index.js",
     "repository": {
         "type": "git",
         "url": "https://github.com/dmitrymatveev/data-wire"
@@ -22,6 +22,7 @@
         "kew": "^0.5.0"
     },
     "devDependencies": {
+        "jsdoc": "^3.3.0-beta1",
         "mocha": "~2.0.1"
     }
 }

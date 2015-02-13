@@ -1,0 +1,6 @@
+{
+    "destination": "./.doc/",
+    "source": {
+        "include": "lib/"
+    }
+}
