@@ -1,0 +1,20 @@
+{
+    "name": "data-wire",
+    "version": "0.0.1-alpha.1",
+    "description": "Simple data abstraction layer.",
+    "keywords": [
+        "nodejs",
+        "data",
+        "layer",
+        "abstraction"
+    ],
+    "main": "index.js",
+    "scripts": {
+        "test": "mocha test/specs"
+    },
+    "author": "Dmitry Matveev",
+    "license": "MIT",
+    "devDependencies": {
+        "mocha": "~2.0.1"
+    }
+}
