@@ -18,6 +18,9 @@
     },
     "author": "Dmitry Matveev",
     "license": "MIT",
+    "dependencies": {
+        "kew": "^0.5.0"
+    },
     "devDependencies": {
         "mocha": "~2.0.1"
     }
