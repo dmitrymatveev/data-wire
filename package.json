@@ -9,6 +9,10 @@
         "abstraction"
     ],
     "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/dmitrymatveev/data-wire"
+    },
     "scripts": {
         "test": "mocha test/specs"
     },
