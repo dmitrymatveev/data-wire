@@ -1,5 +1,7 @@
 {
-    "destination": "./.doc/",
+    "opts": {
+        "destination": ".doc/"
+    },
     "source": {
         "include": "lib/"
     }
