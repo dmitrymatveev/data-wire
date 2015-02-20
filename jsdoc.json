@@ -3,6 +3,10 @@
         "destination": ".doc/"
     },
     "source": {
-        "include": "lib/"
+        "include": [
+            "./package.json",
+            "lib/",
+            "README.md"
+        ]
     }
 }
