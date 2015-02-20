@@ -1,3 +1,9 @@
+# the world does not need my web storm project settings
 .idea
+
+# too late for tasting isnt it
 test/
+
+# doc generator config gosh
+.doc
 jsdoc.json
