@@ -12,6 +12,10 @@ var MyModel = new Datawire.Model({
         return this.foo + this.boo;
     })
 
+}, {
+    onInstanceInit : function (instance) {
+        console.log('init instance ' + instance.foo);
+    }
 });
 
 MyModel.setTransport(Datawire.Transport.extend({
