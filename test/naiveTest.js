@@ -10,7 +10,11 @@ var MyModel = new Datawire.Model({
 
     puted : Datawire.DataType.Computed(function () {
         return this.foo + this.boo;
-    })
+    }),
+
+    fnc : function () {
+        return this.boo;
+    }
 
 }, {
     onInstanceInit : function (instance) {
@@ -43,6 +47,10 @@ MyModel.setTransport(Datawire.Transport.extend({
 var m = MyModel.create({ test : 1, foo : 'foo' });
 
 m.boo = 'text';
+
+m.fnc();
+
+console.log('BOO ' + m.fnc());
 
 var p = m.puted();
 console.log(p);
