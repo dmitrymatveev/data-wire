@@ -24,46 +24,82 @@ var MyModel = new Datawire.Model({
 
 MyModel.setTransport(Datawire.Transport.extend({
 
+    guineyPig : { test : 1, foo : 'foo' },
+
     read : function (key) {
-        return Promise.resolve({ test : 1, foo : 'foo' });
+        return Promise.resolve(this.guineyPig);
     },
 
     create : function (obj) {
-        console.log(obj);
-        return Promise.resolve({ test : 1, foo : 'foo' });
+        this.guineyPig = obj.serialized();
+        return Promise.resolve(true);
     },
 
     update : function (obj) {
-        console.log(obj);
-        return Promise.resolve({ test : 1, foo : 'foo' });
+        this.guineyPig = obj.serialized();
+        return Promise.resolve(true);
     },
 
     destroy : function (obj) {
-        console.log(obj);
-        return Promise.resolve({ test : 1, foo : 'foo' });
+        this.guineyPig = null;
+        return Promise.resolve(true);
     }
 }));
 
 var m = MyModel.create({ test : 1, foo : 'foo' });
 
 m.boo = 'text';
+m.test = 22;
 
 m.fnc();
 
 console.log('BOO ' + m.fnc());
 
 var p = m.puted();
-console.log(p);
+//console.log(p);
 //m.testFunction();
 
-m.commit().then(function (model) {
+m.commit()
+    .then(function (model) {
 
-    console.log(m);
+        //console.log(m);
 
-    var keys = Object.keys(model);
+        var keys = Object.keys(model);
 
-    console.log(keys);
+        console.log(keys);
 
-    m.release();
+        m.release();
 
-});
+        return MyModel.find('');
+    })
+    .then(function (m) {
+
+        console.log('')
+        console.log(m)
+        console.log('')
+
+        console.log(m.test);
+        console.log(m.foo);
+        console.log(m.boo);
+
+        m.boo = "blah";
+
+        console.log(m.boo);
+        console.log(m.serialized())
+
+        m.revert();
+        console.log(m.serialized())
+
+        m.boo = "blahblah";
+        m.revert();
+
+        return m.commit();
+    })
+    .then(function (m) {
+
+        console.log(m.serialized());
+        m.boo = "blah";
+        console.log(m.isDirty());
+        console.log(m.serialized())
+
+    });
