@@ -14,14 +14,15 @@
         "url": "https://github.com/dmitrymatveev/data-wire"
     },
     "scripts": {
-        "test": "mocha test/specs"
+        "test": "mocha test"
     },
     "author": "Dmitry Matveev",
     "license": "MIT",
-    "dependencies": {
-    },
+    "dependencies": {},
     "devDependencies": {
+        "bluebird": "^2.9.24",
         "jsdoc": "^3.3.0-beta1",
-        "mocha": "~2.0.1"
+        "mocha": "~2.0.1",
+        "should": "^5.2.0"
     }
 }
