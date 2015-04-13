@@ -1,6 +1,6 @@
 {
     "name": "data-wire",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "Simple data abstraction layer.",
     "keywords": [
         "nodejs",
