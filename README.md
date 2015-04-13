@@ -52,8 +52,9 @@ Creates and return new [`ModelInstance`](#ModelInstance).
 
 #### Model.find(key[, meta])
 Invokes `Transport.read` function. Returns `Promise<ModelInstance|null>`
-	* key {String} Identifier to use when searching for data
-	* meta {*} Anything that your transport implementation is expecting in place of this meta param.
+
+* key {String} Identifier to use when searching for data
+* meta {*} Anything that your transport implementation is expecting in place of this meta param.
 
 ## DataType
 These are object literal mixins. It wraps most common data types and control the way data is handled.
@@ -70,12 +71,15 @@ creating slightly modified types (for example two strings that differ in its def
 In practice the following 3 properties is all what needs to be modified when default values are not suitable.
 
 * Any.defaultValue
+
 Value to initialize to when assigned value was not defined. (Default `undefined`).
 
 * Any.optional
+
 Specifies that this piece of data can not be left undefined. (Default `true`).
 
 * Any.virtual
+
 Virtual data types would not be serialized by its model instance. (Default `false`).
 
 When more complex data type is needed which does not come with DataWire the following set of function could be replaced with custom implementation.
