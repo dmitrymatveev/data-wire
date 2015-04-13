@@ -68,7 +68,6 @@ This is a __base__ data type. Use it (or more specific ones for that matter) as 
 
 Mixes references of all own properties in self into provided `obj` and returns it. This function has two uses,
 creating slightly modified types (for example two strings that differ in its default values) or a more complex data representation.
-
 	* obj {Object} - Mixin target
 
 In practice the following 3 properties is all what needs to be modified when default values are not suitable.
@@ -220,18 +219,23 @@ _Note_ : when resolving to a non-`null` in `update` or `create` function, the da
 Instantiation of model instances could be a costly process due to the fact that properties defined in a Model are not bound the the prototype and instead are created on the fly. To reduce the overhead during runtime, Model stores a reference to the object pool for every Model definition and uses that to obtain previously created instances of an object.
 
 * ObjectPool.extend(obj) : {ObjectPool}
+
 Mixes references of all own properties in self into provided `obj` and returns it. Use it to create custom object pools.
 	* obj {Object} - Mixin target
 
 * ObjectPool.size {Number}
+
 Maximum allowed object in the pool. Default `10`. Set this to `zero` in order to turn of object pooling. (Alternatively just simply don't call `ModelInstance.release` method which actually causes the object to be saved for later).
 
 * ObjectPool.generator() :  {[`ModelInstance`](#ModelInstance)}
+
 ModelInstance constructor function wrapper. Overwriting this will not have any effect since Model decides which constructor to use for instances.
 
 * ObjectPool.acquire() : {[`ModelInstance`](#ModelInstance)}
+
 Called when an instance of the object needs to be pulled from the pool. Must return a reference to the object.
 A bare-bones implementation which avoids pooling would be to call constructor stored in ObjectPool.generator and return it.
 
 * ObjectPool.store(obj : {[`ModelInstance`](#ModelInstance)})
+
 Put `obj` into a pool.
