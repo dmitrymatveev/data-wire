@@ -33,6 +33,7 @@ representation on the client (consumer), allowing the said client to carry on wi
 * Transport
 * ObjectPool
 
+<a name="Model" />
 ## Model(definition, options)
 Creates an instance of the Model definition.
 
@@ -43,9 +44,9 @@ Creates an instance of the Model definition.
 	* options.onInstanceInit - Called when new instance is created.
 	* options.onInstanceRevert - Called when instance is being reset to its default state.
 
-#### Model.setTransport([`Transport`](#Transport))
+#### Model.setTransport([`Transport`](#Transport)
 
-#### Model.setObjectPool([`ObjectPool`](#(ObjectPool))
+#### Model.setObjectPool([`ObjectPool`](#ObjectPool)
 
 #### Model.create(obj)
 Creates and return new [`ModelInstance`](#ModelInstance).
@@ -56,6 +57,7 @@ Invokes `Transport.read` function. Returns `Promise<ModelInstance|null>`
 * key {String} Identifier to use when searching for data
 * meta {*} Anything that your transport implementation is expecting in place of this meta param.
 
+<a name="DataType" />
 ## DataType
 These are object literal mixins. It wraps most common data types and control the way data is handled.
 
@@ -63,6 +65,7 @@ These are object literal mixins. It wraps most common data types and control the
 This is a __base__ data type. Use it (or more specific ones for that matter) as a starting point in case you need a custom representation of data or you want a very general data location.
 
 * Any.extend(obj)
+
 Mixes references of all own properties in self into provided `obj` and returns it. This function has two uses,
 creating slightly modified types (for example two strings that differ in its default values) or a more complex data representation.
 
@@ -85,9 +88,11 @@ Virtual data types would not be serialized by its model instance. (Default `fals
 When more complex data type is needed which does not come with DataWire the following set of function could be replaced with custom implementation.
 
 * Any.validate(name, value)
+
 Called when assigning value into a `ModelInstance`. Must throw an error when `value` is not legal.
 
 * Any.valueCopy(value)
+
 Called after committing changes and when a value is being copied over into a `ModelInstance`. In cases when `value` is not a primitive you might want to make sure you are handling references vs values correctly.
 
 
@@ -149,6 +154,7 @@ Computed is a special data type which is always set to be _virtual_ and is prima
 
 
 
+<a name="ModelInstance" />
 ## ModelInstance(model)
 Constructor is private. Use `Model.create` or `Model.find` to get one.
 
@@ -172,6 +178,8 @@ Undo all the changes made since the last call to `ModelInstance.commit` function
 Resets this object to default values and stores the reference to it in the object pool for the current Model type.
 Not calling this function when exiting the scope will _not_ cause a memory leak when using default ObjectPool but instead allow GC to do its thing.
 
+
+<a name="Transport" />
 ## Transport
 Transport is an abstract mixin responsible for providing implementation for storing and retrieving model instance data.
 
@@ -206,6 +214,8 @@ _Note_ : when resolving to a non-`null` in `update` or `create` function, the da
 		ex.name; // will be 'Name From Transport' now
 	}); 
 
+
+<a name="ObjectPool" />
 ## ObjectPool
 Instantiation of model instances could be a costly process due to the fact that properties defined in a Model are not bound the the prototype and instead are created on the fly. To reduce the overhead during runtime, Model stores a reference to the object pool for every Model definition and uses that to obtain previously created instances of an object.
 
