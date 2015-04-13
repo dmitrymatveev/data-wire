@@ -38,10 +38,10 @@ Creates an instance of the Model definition.
 
 * definition - A hash of [`DataTypes`](#DataTypes) defining a resource.
 * options
-*options.transport - Set custom transport.
-*options.objectPool - Set custom object pool implementation .
-*options.onInstanceInit - Called when new instance is created.
-*options.onInstanceRevert - Called when instance is being reset to its default state.
+	* options.transport - Set custom transport.
+	* options.objectPool - Set custom object pool implementation .
+	* options.onInstanceInit - Called when new instance is created.
+	* options.onInstanceRevert - Called when instance is being reset to its default state.
 
 #### Model.setTransport([`Transport`](#Transport))
 
