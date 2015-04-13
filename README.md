@@ -37,19 +37,23 @@ representation on the client (consumer), allowing the said client to carry on wi
 ## Model(definition, options)
 Creates an instance of the Model definition.
 
-* definition - A hash of [`DataTypes`](#DataTypes) defining a resource.
+* definition - A hash of [`DataTypes`](#DataType) defining a resource.
 * options
 	* options.transport - Set custom transport.
 	* options.objectPool - Set custom object pool implementation .
 	* options.onInstanceInit - Called when new instance is created.
 	* options.onInstanceRevert - Called when instance is being reset to its default state.
 
-#### Model.setTransport([`Transport`](#Transport)
+#### Model.setTransport(transport)
+Set to use provided [`transport`](#(Transport)
 
-#### Model.setObjectPool([`ObjectPool`](#ObjectPool)
+#### Model.setObjectPool(objectPool)
+Set to use provided [`objectPool`](#(ObjectPool)
 
 #### Model.create(obj)
 Creates and return new [`ModelInstance`](#ModelInstance).
+
+* obj {Object} - Object literal containing data which describes a new instance of the model.
 
 #### Model.find(key[, meta])
 Invokes `Transport.read` function. Returns `Promise<ModelInstance|null>`
@@ -221,7 +225,8 @@ Instantiation of model instances could be a costly process due to the fact that 
 * ObjectPool.extend(obj) : {ObjectPool}
 
 Mixes references of all own properties in self into provided `obj` and returns it. Use it to create custom object pools.
-	* obj {Object} - Mixin target
+
+obj {Object} - Mixin target
 
 * ObjectPool.size {Number}
 
