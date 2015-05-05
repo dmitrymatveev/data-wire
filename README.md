@@ -1,5 +1,8 @@
 
 # Data Wire
+
+[![NPM](https://nodei.co/npm/data-wire.png)](https://nodei.co/npm/data-wire/)
+
 Simple data abstraction layer between the client and associated data storage whichever it might be.
 
 Main purpose of this module is to provide an easy to use abstraction in the form of a simple interface
