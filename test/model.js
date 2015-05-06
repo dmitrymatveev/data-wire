@@ -103,4 +103,41 @@ describe('Model:', function () {
                 ex.id.should.equal(100);
             });
     });
+
+    it('get keys', function () {
+
+        var Example = new Model({id : Type.Number});
+        Example.setTransport(TestTransport);
+
+        var ex = Example.create({id : 1});
+        var keys = ex.keys();
+
+        keys.should.containEql('id');
+    });
+
+    it('get dirty keys only', function () {
+
+        var Example = new Model({id : Type.Number, foo : Type.String});
+        Example.setTransport(TestTransport);
+
+        var ex = Example.create({id : 1});
+        var keys = ex.keys(true);
+        keys.should.containEql('id', 'foo');
+
+        ex.commit()
+            .then(function () {
+                keys = ex.keys(true);
+                keys.should.be.empty;
+
+                ex.foo = "boo";
+                keys = ex.keys(true);
+                keys.should.containEql('foo');
+
+                return ex.commit();
+            })
+            .then(function () {
+                keys = ex.keys(true);
+                keys.should.be.empty;
+            })
+    });
 });
