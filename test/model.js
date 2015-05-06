@@ -1,5 +1,5 @@
 
-require('should');
+var should = require('should');
 
 var Promise = require('bluebird');
 var datawire = require('../lib/index.js');
@@ -127,7 +127,7 @@ describe('Model:', function () {
         ex.commit()
             .then(function () {
                 keys = ex.keys(true);
-                keys.should.be.empty;
+                should.not.exist(keys);
 
                 ex.foo = "boo";
                 keys = ex.keys(true);
@@ -137,7 +137,7 @@ describe('Model:', function () {
             })
             .then(function () {
                 keys = ex.keys(true);
-                keys.should.be.empty;
+                should.not.exist(keys);
             })
     });
 });
