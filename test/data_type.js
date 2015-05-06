@@ -60,9 +60,7 @@ describe('Data Type:', function () {
 
         var Example = new Model({
             count : Type.Number.extend({
-                valueTransform : function (current, last) {
-                    return last + current;
-                }
+                valueTransform : Type.Number.Transform.Counter
             })
         }, {
             transport : Transport.extend({
