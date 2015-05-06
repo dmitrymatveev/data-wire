@@ -27,7 +27,7 @@ describe('Data Type:', function () {
 
         (function () {
             Example.create();
-        }).should.throw('Non optional id property is missing on the model instance!');
+        }).should.throw({name : 'no_value'});
 
     });
 
@@ -55,6 +55,37 @@ describe('Data Type:', function () {
         var ex = Example.create();
         ex.should.have.property('id', 100);
     });
+
+    it('transform value on commit', function () {
+
+        var Example = new Model({
+            count : Type.Number.extend({
+                valueTransform : function (current, last) {
+                    return last + current;
+                }
+            })
+        }, {
+            transport : Transport.extend({
+                create : function () { return Promise.resolve(null) },
+                update : function (o) { return Promise.resolve(o.serialized()) }
+            })
+        });
+
+        var ex = Example.create({ count : 0 });
+        ex.commit()
+            .then(function () {
+                ex.count = 10;
+                return ex.commit();
+            })
+            .then(function () {
+                ex.count.should.equal(10);
+                ex.count = 10;
+                return ex.commit();
+            })
+            .then(function () {
+                ex.count.should.equal(20);
+            })
+    })
 
 });
 
