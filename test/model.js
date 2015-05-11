@@ -72,7 +72,33 @@ describe('Model:', function () {
         example.idName().should.be.equal('1test');
     });
 
-    it('revert changes in local copy', function () {
+    it('create partially filled instance and commit', function (done) {
+
+        var Example = new Model({
+            id : Type.Number.extend({optional:false}),
+            name : Type.String
+        }, {
+            transport : TestTransport.extend({
+                create : function (obj) {
+                    PersistentDataStorage[obj.id] = obj.serialized();
+                    PersistentDataStorage[obj.id].name = 'instance_'+obj.id;
+                    return Promise.resolve(PersistentDataStorage[obj.id]);
+                }
+            })
+        });
+
+        var example = Example.create({
+            id : 1
+        });
+
+        example.commit().then(function () {
+            example.should.have.property('id', 1);
+            example.should.have.property('name', 'instance_1');
+        })
+            .then(done);
+    });
+
+    it('revert changes in local copy', function (done) {
 
         var Example = new Model({id : Type.Number});
         Example.setTransport(Transport.extend({
@@ -101,7 +127,8 @@ describe('Model:', function () {
                 ex.id = 50;
                 ex.revert();
                 ex.id.should.equal(100);
-            });
+            })
+            .then(done);
     });
 
     it('get keys', function () {
@@ -115,7 +142,7 @@ describe('Model:', function () {
         keys.should.containEql('id');
     });
 
-    it('get dirty keys only', function () {
+    it('get dirty keys only', function (done) {
 
         var Example = new Model({id : Type.Number, foo : Type.String});
         Example.setTransport(TestTransport);
@@ -139,5 +166,6 @@ describe('Model:', function () {
                 keys = ex.keys(true);
                 should.not.exist(keys);
             })
+            .then(done);
     });
 });
