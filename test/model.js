@@ -168,4 +168,16 @@ describe('Model:', function () {
             })
             .then(done);
     });
+
+    it('get filtered keys', function () {
+
+        var Example = new Model({id : Type.Number, foo : Type.String});
+        var ex = Example.create();
+
+        var keys = ex.keys(null, Type.Number);
+
+        keys.should.have.length(1);
+        keys.should.containEql('id');
+
+    });
 });

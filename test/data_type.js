@@ -182,7 +182,7 @@ describe('Serialized data types', function () {
         var example = Example.create({serial : 'newValue'});
         example.commit().then(function () {
             example.serial.should.eql('newValue');
-        })
+        });
     });
 
 });
