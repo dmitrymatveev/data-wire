@@ -83,7 +83,7 @@ describe('Data Type:', function () {
             .then(function () {
                 ex.count.should.equal(20);
             })
-    })
+    });
 
 });
 
@@ -137,6 +137,52 @@ describe('Non Primitive Data Types', function () {
             ex.obj.should.have.property('foo');
             ex.obj.should.not.have.property('boo');
         });
+    });
+
+});
+
+describe('Serialized data types', function () {
+
+    var Serializable = Type.Any.extend({
+        serialized : function (v) {
+            return v + '_serialized';
+        },
+        deserialized : function (v) {
+            return v.split('_')[0];
+        }
+    });
+
+    var Example = new Model({
+        serial : Serializable
+    }, {
+        transport : Transport.extend({
+            read : function () {
+
+                return Promise.resolve({serial : 'storedValue_serialized'});
+            },
+            create : function (model) {
+
+                var serialized = model.serialized();
+                serialized.serial.should.eql('newValue_serialized');
+
+                return Promise.resolve({serial : 'newValue_serialized'});
+            }
+        })
+    });
+
+    it('returned deserialized', function () {
+
+        Example.find('arbitrary criteria').then(function (example) {
+            example.serial.should.eql('storedValue');
+        });
+    });
+
+    it('serialize value on demand', function () {
+
+        var example = Example.create({serial : 'newValue'});
+        example.commit().then(function () {
+            example.serial.should.eql('newValue');
+        })
     });
 
 });
