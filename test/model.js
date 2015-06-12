@@ -178,6 +178,16 @@ describe('Model:', function () {
 
         keys.should.have.length(1);
         keys.should.containEql('id');
-
     });
+
+    it('create filtered serialized object', function () {
+
+        var Example = new Model({id : Type.Number, foo : Type.String});
+        var ex = Example.create();
+
+        var keys = ex.keys(null, Type.Number);
+        var obj = ex.serialized(keys);
+
+        obj.should.have.keys('id');
+    })
 });
