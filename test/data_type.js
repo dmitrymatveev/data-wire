@@ -56,18 +56,42 @@ describe('Data Type:', function () {
         ex.should.have.property('id', 100);
     });
 
-    it('transform value on commit', function () {
+});
 
-        var Example = new Model({
-            count : Type.Number.extend({
-                valueTransform : Type.Number.Transform.Counter
+describe('Counter value transform', function () {
+
+    var Example = new Model({
+        count : Type.Number.Counter
+    }, {
+        transport : Transport.extend({
+            create : function () { return Promise.resolve(null) },
+            update : function (o) { return Promise.resolve(o.serialized()) }
+        })
+    });
+
+    it('correctly identify dirty state', function () {
+
+        var ex = Example.create({ count : 0 });
+        ex.commit()
+            .then(function () {
+
+                ex.isDirty('count').should.not.be.true;
+
+                ex.count = 1;
+                ex.isDirty('count').should.be.true;
+
+                ex.count = 0;
+                ex.isDirty('count').should.not.be.true;
+
+                ex.count = 1;
+                return ex.commit();
             })
-        }, {
-            transport : Transport.extend({
-                create : function () { return Promise.resolve(null) },
-                update : function (o) { return Promise.resolve(o.serialized()) }
+            .then(function () {
+                ex.isDirty('count').should.not.be.true;
             })
-        });
+    });
+
+    it('transform value on commit', function () {
 
         var ex = Example.create({ count : 0 });
         ex.commit()
@@ -84,7 +108,6 @@ describe('Data Type:', function () {
                 ex.count.should.equal(20);
             })
     });
-
 });
 
 describe('Non Primitive Data Types', function () {
