@@ -16,6 +16,7 @@ describe('Data Type:', function () {
         });
 
         var ex = Example.create();
+        var id = ex.id;
         ex.should.have.property('id', 0);
     });
 
@@ -65,33 +66,40 @@ describe('Counter value transform', function () {
     }, {
         transport : Transport.extend({
             create : function () { return Promise.resolve(null) },
-            update : function (o) { return Promise.resolve(o.serialized()) }
+            update : function (o) {
+
+                var serialized = o.serialized();
+                return Promise.resolve(serialized)
+            }
         })
     });
 
-    it('correctly identify dirty state', function () {
+    it('correctly identify dirty state', function (done) {
 
         var ex = Example.create({ count : 0 });
         ex.commit()
             .then(function () {
 
-                ex.isDirty('count').should.not.be.true;
+                ex.isDirty('count').should.equal(false);
 
                 ex.count = 1;
-                ex.isDirty('count').should.be.true;
+                ex.isDirty('count').should.equal(true);
 
                 ex.count = 0;
-                ex.isDirty('count').should.not.be.true;
+                ex.isDirty('count').should.equal(false);
 
                 ex.count = 1;
                 return ex.commit();
             })
             .then(function () {
-                ex.isDirty('count').should.not.be.true;
+                var isDirty = ex.isDirty('count');
+                isDirty.should.equal(false);
             })
+            .then(done)
+            .catch(done);
     });
 
-    it('transform value on commit', function () {
+    it('transform value on commit', function (done) {
 
         var ex = Example.create({ count : 0 });
         ex.commit()
@@ -107,6 +115,8 @@ describe('Counter value transform', function () {
             .then(function () {
                 ex.count.should.equal(20);
             })
+            .then(done)
+            .catch(done);
     });
 });
 
@@ -124,7 +134,7 @@ describe('Non Primitive Data Types', function () {
         transport : TestTransport
     });
 
-    it('using revert with Array type', function () {
+    it('using revert with Array type', function (done) {
 
         var ex = Example.create({});
         ex.arr.push(1);
@@ -134,15 +144,18 @@ describe('Non Primitive Data Types', function () {
 
         ex.arr.push(1);
 
-        ex.commit().then(function () {
-            ex.arr.push(1);
-            ex.arr.should.have.length(2);
-            ex.revert();
-            ex.arr.should.have.length(1);
-        });
+        ex.commit()
+            .then(function () {
+                ex.arr.push(1);
+                ex.arr.should.have.length(2);
+                ex.revert();
+                ex.arr.should.have.length(1);
+            })
+            .then(done)
+            .catch(done);
     });
 
-    it('using revert with Object type', function () {
+    it('using revert with Object type', function (done) {
 
         var ex = Example.create({});
         ex.obj.foo = 'foo';
@@ -152,14 +165,17 @@ describe('Non Primitive Data Types', function () {
 
         ex.obj.foo = 'foo';
 
-        ex.commit().then(function (ex) {
-            ex.obj.boo = 'boo';
-            ex.obj.should.have.properties('foo', 'boo');
+        ex.commit()
+            .then(function (ex) {
+                ex.obj.boo = 'boo';
+                ex.obj.should.have.properties('foo', 'boo');
 
-            ex.revert();
-            ex.obj.should.have.property('foo');
-            ex.obj.should.not.have.property('boo');
-        });
+                ex.revert();
+                ex.obj.should.have.property('foo');
+                ex.obj.should.not.have.property('boo');
+            })
+            .then(done)
+            .catch(done);
     });
 
 });
@@ -193,19 +209,25 @@ describe('Serialized data types', function () {
         })
     });
 
-    it('returned deserialized', function () {
+    it('returned deserialized', function (done) {
 
-        Example.find('arbitrary criteria').then(function (example) {
-            example.serial.should.eql('storedValue');
-        });
+        Example.find('arbitrary criteria')
+            .then(function (example) {
+                example.serial.should.eql('storedValue');
+            })
+            .then(done)
+            .catch(done);
     });
 
-    it('serialize value on demand', function () {
+    it('serialize value on demand', function (done) {
 
         var example = Example.create({serial : 'newValue'});
-        example.commit().then(function () {
-            example.serial.should.eql('newValue');
-        });
+        example.commit()
+            .then(function () {
+                example.serial.should.eql('newValue');
+            })
+            .then(done)
+            .catch(done);
     });
 
 });

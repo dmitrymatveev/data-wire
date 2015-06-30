@@ -95,7 +95,8 @@ describe('Model:', function () {
             example.should.have.property('id', 1);
             example.should.have.property('name', 'instance_1');
         })
-            .then(done);
+            .then(done)
+            .catch(done);
     });
 
     it('revert changes in local copy', function (done) {
@@ -128,7 +129,8 @@ describe('Model:', function () {
                 ex.revert();
                 ex.id.should.equal(100);
             })
-            .then(done);
+            .then(done)
+            .catch(done);
     });
 
     it('get keys', function () {
@@ -166,7 +168,8 @@ describe('Model:', function () {
                 keys = ex.keys(true);
                 should.not.exist(keys);
             })
-            .then(done);
+            .then(done)
+            .catch(done);
     });
 
     it('get filtered keys', function () {

@@ -57,7 +57,7 @@ describe('Transport:', function () {
         }).should.not.throw();
     });
 
-    it('invokes create with correct params', function () {
+    it('invokes create with correct params', function (done) {
 
         Example.setTransport(Transport.extend({
             create : function (obj, meta) {
@@ -69,12 +69,15 @@ describe('Transport:', function () {
         }));
 
         var ex = Example.create();
-        ex.commit({foo:'foo'}).then(function () {
-            ex.should.have.property('created', true);
-        })
+        ex.commit({foo:'foo'})
+            .then(function () {
+                ex.should.have.property('created', true);
+            })
+            .then(done)
+            .catch(done);
     });
 
-    it('invokes read with correct params', function () {
+    it('invokes read with correct params', function (done) {
 
         Example.setTransport(Transport.extend({
             read : function (key, meta, model) {
@@ -85,13 +88,16 @@ describe('Transport:', function () {
             }
         }));
 
-        Example.find('item_1', {foo:'foo'}).then(function (ex) {
-            ex.should.have.property('id', 1);
-            ex.should.have.property('name', 'test');
-        });
+        Example.find('item_1', {foo:'foo'})
+            .then(function (ex) {
+                ex.should.have.property('id', 1);
+                ex.should.have.property('name', 'test');
+            })
+            .then(done)
+            .catch(done);
     });
 
-    it('invokes update with correct params', function () {
+    it('invokes update with correct params', function (done) {
 
         Example.setTransport(Transport.extend({
             read : function (key, meta, model) {
@@ -114,10 +120,12 @@ describe('Transport:', function () {
             .then(function (ex) {
                 ex.should.have.property('updated', true);
             })
+            .then(done)
+            .catch(done);
 
     });
 
-    it('invokes destroy with correct params', function () {
+    it('invokes destroy with correct params', function (done) {
 
         Example.setTransport(Transport.extend({
             read : function (key, meta, model) {
@@ -141,9 +149,11 @@ describe('Transport:', function () {
             .then(function (ex) {
                 should.not.exist(ex);
             })
+            .then(done)
+            .catch(done);
     });
 
-    it('update instance properties by returning data object from transport', function () {
+    it('update instance properties by returning data object from transport', function (done) {
 
         Example.setTransport(Transport.extend({
             read : function (key, meta, model) {
@@ -163,7 +173,7 @@ describe('Transport:', function () {
             }
         }));
 
-        Example.find('item_1')
+        var findStuff = Example.find('item_1')
             .then(function (ex) {
                 should.exist(ex);
                 ex.name.should.equal('test');
@@ -175,12 +185,17 @@ describe('Transport:', function () {
                 ex.name.should.equal('updated name');
             });
 
-        Example.create({id:2})
-            .commit()
+        var createStuff = findStuff
+            .then(function () {
+                return Example.create({id:2}).commit();
+            })
             .then(function (ex) {
                 ex.name.should.equal('created name');
             });
 
+        createStuff
+            .then(done)
+            .catch(done);
     });
 
 });
