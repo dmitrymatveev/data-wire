@@ -1,6 +1,8 @@
 
 # Data Wire
 
+[![Build Status](https://travis-ci.org/dmitrymatveev/data-wire.svg?branch=master)](https://travis-ci.org/dmitrymatveev/data-wire)
+
 [![NPM](https://nodei.co/npm/data-wire.png)](https://nodei.co/npm/data-wire/)
 
 Simple data abstraction layer between the client and associated data storage whichever it might be.
@@ -48,10 +50,10 @@ Creates an instance of the Model definition.
 	* options.onInstanceRevert - Called when instance is being reset to its default state.
 
 #### Model.setTransport(transport)
-Set to use provided [`transport`](#(Transport)
+Set to use provided [`transport`](#Transport)
 
 #### Model.setObjectPool(objectPool)
-Set to use provided [`objectPool`](#(ObjectPool)
+Set to use provided [`objectPool`](#ObjectPool)
 
 #### Model.create(obj)
 Creates and return new [`ModelInstance`](#ModelInstance).
@@ -101,6 +103,15 @@ Called when assigning value into a `ModelInstance`. Must throw an error when `va
 
 Called after committing changes and when a value is being copied over into a `ModelInstance`. In cases when `value` is not a primitive you might want to make sure you are handling references vs values correctly.
 
+* Any.serialized(value)
+Called before sending value to transport.
+
+* Any.deserialized(value)
+Called on values from transport before returning to the client.
+
+* Any.valueTransform(last, next)
+Optional routine that is executed after deserialization and can be used to modify the value before
+returning to the client.
 
 ### Array
 * Array.defaultValue : []
@@ -110,6 +121,9 @@ Called after committing changes and when a value is being copied over into a `Mo
 
 ### Number
 * Number.defaultValue : 0
+
+#### Number.NumberCounter
+Uses 'valueTransform' to increment current value with the data coming in from Transport.
 
 ### Object
 * Object.defaultValue : {}
@@ -164,8 +178,10 @@ Computed is a special data type which is always set to be _virtual_ and is prima
 ## ModelInstance(model)
 Constructor is private. Use `Model.create` or `Model.find` to get one.
 
-#### ModelInstance.serialized()
+#### ModelInstance.serialized(filter)
 Returns an object literal containing all contents of non-virtual properties in this model. 
+
+* filter {String[]} - Specifies properties to be serialized
 
 #### ModelInstance.destroy()
 Marks this object to be sent to `Transport.destroy` on next call to 'ModelInstance.commit`.
@@ -184,6 +200,13 @@ Undo all the changes made since the last call to `ModelInstance.commit` function
 Resets this object to default values and stores the reference to it in the object pool for the current Model type.
 Not calling this function when exiting the scope will _not_ cause a memory leak when using default ObjectPool but instead allow GC to do its thing.
 
+#### ModelInstance.keys(dirty, type)
+Returns array of property names for this model, which can be filtered according to its dirty state and/or DataType.
+
+* dirty {Boolean} - filter out clean values
+* type {[`DataTypes`](#DataType)} - include only properties of the specified data type
+
+Returns {String[]}
 
 <a name="Transport" />
 ## Transport

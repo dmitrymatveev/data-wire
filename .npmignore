@@ -7,3 +7,4 @@ test/
 # doc generator config gosh
 .doc
 jsdoc.json
+.travis.yml
