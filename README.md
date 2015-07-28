@@ -48,6 +48,16 @@ Creates an instance of the Model definition.
 	* options.objectPool - Set custom object pool implementation .
 	* options.onInstanceInit - Called when new instance is created.
 	* options.onInstanceRevert - Called when instance is being reset to its default state.
+	
+#### Model.clone([options])
+Creates a copy of this Model definition instance. Useful when same model might need to use different
+configuration.
+
+For example, same model can use two different transports which would otherwise have to be swapped
+before each commit or search function call.
+
+* options - Same as in Model constructor. When specified this object will be used as a mixin for the
+original options used to instantiate this Model definition.
 
 #### Model.setTransport(transport)
 Set to use provided [`transport`](#Transport)
@@ -226,6 +236,8 @@ The following are the 4 core functions of Transport that must be implemented by 
 * Transport.destroy(obj[, meta])
 
 _Note_ : when resolving to a non-`null` in `update` or `create` function, the data will be used to override what is currently stored in the ModelInstance object.
+
+* Transport.init() - Called when transport is being set to a Model. 
 
 ##### E.g
 	var Example = new Model({ name : DataType.String });
