@@ -78,7 +78,8 @@ Invokes `Transport.read` function. Returns `Promise<ModelInstance|null>`
 
 <a name="DataType" />
 ## DataType
-These are object literal mixins. It wraps most common data types and control the way data is handled.
+These are object literal mixins extending [`BaseObject`](#BaseObject) providing functionality to control
+access and data-flow to and from transports.
 
 ### Any
 This is a __base__ data type. Use it (or more specific ones for that matter) as a starting point in case you need a custom representation of data or you want a very general data location.
@@ -220,6 +221,7 @@ Returns {String[]}
 
 <a name="Transport" />
 ## Transport
+###### extends [`BaseObject`](#BaseObject)
 Transport is an abstract mixin responsible for providing implementation for storing and retrieving model instance data.
 
 In cases when Transport is implemented partially an Error will be thrown while attempting to complete an operation which requires a missing function.
@@ -236,8 +238,6 @@ The following are the 4 core functions of Transport that must be implemented by 
 * Transport.destroy(obj[, meta])
 
 _Note_ : when resolving to a non-`null` in `update` or `create` function, the data will be used to override what is currently stored in the ModelInstance object.
-
-* Transport.init() - Called when transport is being set to a Model. 
 
 ##### E.g
 	var Example = new Model({ name : DataType.String });
@@ -258,6 +258,7 @@ _Note_ : when resolving to a non-`null` in `update` or `create` function, the da
 
 <a name="ObjectPool" />
 ## ObjectPool
+###### extends [`BaseObject`](#BaseObject)
 Instantiation of model instances could be a costly process due to the fact that properties defined in a Model are not bound the the prototype and instead are created on the fly. To reduce the overhead during runtime, Model stores a reference to the object pool for every Model definition and uses that to obtain previously created instances of an object.
 
 * ObjectPool.extend(obj) : {ObjectPool}
@@ -282,3 +283,11 @@ A bare-bones implementation which avoids pooling would be to call constructor st
 * ObjectPool.store(obj : {[`ModelInstance`](#ModelInstance)})
 
 Put `obj` into a pool.
+
+
+<a name="BaseObject" />
+## BaseObject
+This is the base object priding simple inheritance by a copy mechanism.
+
+* BaseObject.init() - Called on a chile object after it extends instance of this object.
+* BaseObject.extend(extendWith) - Mixes-in this object with properties in the provided object and return it.
