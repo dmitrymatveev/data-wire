@@ -212,12 +212,29 @@ Resets this object to default values and stores the reference to it in the objec
 Not calling this function when exiting the scope will _not_ cause a memory leak when using default ObjectPool but instead allow GC to do its thing.
 
 #### ModelInstance.keys(dirty, type)
+**DEPRECATED** use `propertyFiler(filterObj)` instead
+
 Returns array of property names for this model, which can be filtered according to its dirty state and/or DataType.
 
 * dirty {Boolean} - filter out clean values
 * type {[`DataTypes`](#DataType)} - include only properties of the specified data type
 
 Returns {String[]}
+
+#### ModelInstance.propertyFilter(filter)
+Returns array of property names for this model that pass provided filter parameters if any.
+Filter properties are tested as is (matching its filter value to a current data type instance value).
+All filter properties are optional and those that are ommited will result in a test being ommitted.
+
+##### Filter
+* virtual {Boolean} - Default _false_
+* type {DataType} - Default _DataType.Any_
+* dirty {Boolean} Default _all_. Set it to _true_ if you need only modified values or _false_ otherwise.
+* validate {Function} - A custom validation function. Accepts data type current value and must _return_ a `Boolean` value.
+
+*Note:* Filters are applied in the order they are described above.
+
+**Returns**  {String[]} Array of property names that pass
 
 <a name="Transport" />
 ## Transport
