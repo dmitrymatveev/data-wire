@@ -135,13 +135,18 @@ describe('Model:', function () {
 
     it('get keys', function () {
 
-        var Example = new Model({id : Type.Number});
+        var Example = new Model({
+            id: Type.Number,
+            other: Type.String.extend({virtual: true})
+        });
+
         Example.setTransport(TestTransport);
 
-        var ex = Example.create({id : 1});
-        var keys = ex.keys();
+        var ex = Example.create({id : 1, other: 'other'});
+        var keys = ex.propertyFilter();
 
         keys.should.containEql('id');
+        keys.should.not.containEql('other');
     });
 
     it('get dirty keys only', function (done) {
@@ -150,22 +155,22 @@ describe('Model:', function () {
         Example.setTransport(TestTransport);
 
         var ex = Example.create({id : 1});
-        var keys = ex.keys(true);
+        var keys = ex.propertyFilter({dirty: true});
         keys.should.containEql('id', 'foo');
 
         ex.commit()
             .then(function () {
-                keys = ex.keys(true);
+                keys = ex.propertyFilter({dirty: true});
                 should.not.exist(keys);
 
                 ex.foo = "boo";
-                keys = ex.keys(true);
+                keys = ex.propertyFilter({dirty: true});
                 keys.should.containEql('foo');
 
                 return ex.commit();
             })
             .then(function () {
-                keys = ex.keys(true);
+                keys = ex.propertyFilter({dirty: true});
                 should.not.exist(keys);
             })
             .then(done)
@@ -177,7 +182,7 @@ describe('Model:', function () {
         var Example = new Model({id : Type.Number, foo : Type.String});
         var ex = Example.create();
 
-        var keys = ex.keys(null, Type.Number);
+        var keys = ex.propertyFilter({type: Type.Number});
 
         keys.should.have.length(1);
         keys.should.containEql('id');
@@ -188,7 +193,7 @@ describe('Model:', function () {
         var Example = new Model({id : Type.Number, foo : Type.String});
         var ex = Example.create();
 
-        var keys = ex.keys(null, Type.Number);
+        var keys = ex.propertyFilter({type: Type.Number});
         var obj = ex.serialized(keys);
 
         obj.should.have.keys('id');
