@@ -57,6 +57,21 @@ describe('Data Type:', function () {
         ex.should.have.property('id', 100);
     });
 
+    it('apply validation function', function () {
+
+        var Example = new Model({
+            id : Type.Number.extend({
+                defaultValue : 100,
+                validate: function (v) {
+                    return v >= 0;
+                }
+            })
+        });
+
+        var ex = Example.create();
+        (function () {ex.id = 1;}).should.not.throw();
+        (function () {ex.id = -1;}).should.throw();
+    });
 });
 
 describe('Counter value transform', function () {
