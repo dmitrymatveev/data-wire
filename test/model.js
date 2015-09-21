@@ -24,6 +24,9 @@ describe('Model:', function () {
         };
 
         TestTransport = Transport.extend({
+            readAll: function () {
+                return Promise.resolve([{id:1}, {id:2}]);
+            },
             read : function (key) {
                 return Promise.resolve(PersistentDataStorage[key]);
             },
@@ -197,5 +200,15 @@ describe('Model:', function () {
         var obj = ex.serialized(keys);
 
         obj.should.have.keys('id');
-    })
+    });
+
+    it('initialize model instance array', function () {
+        var Example = new Model({id : Type.Number}, {transport: TestTransport});
+
+        Example.findAll([], null).then(function (res) {
+            res.should.have.length(2);
+            res[0].should.have.property('id', 1);
+            res[1].should.have.property('id', 2);
+        })
+    });
 });
