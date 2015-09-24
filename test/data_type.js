@@ -32,21 +32,6 @@ describe('Data Type:', function () {
 
     });
 
-    it('do not serialize virtual properties', function () {
-
-        var Example = new Model({
-            id : Type.Number.extend({optional:false}),
-            name : Type.String.extend({virtual:true}),
-            foo : function () {
-                return 'foo';
-            }
-        });
-
-        var ex = Example.create({id:1});
-        ex.name = 'test';
-        ex.serialized().should.containDeep({id:1});
-    });
-
     it('set to default value', function () {
 
         var Example = new Model({

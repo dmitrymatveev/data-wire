@@ -182,13 +182,21 @@ describe('Model:', function () {
 
     it('get filtered keys', function () {
 
-        var Example = new Model({id : Type.Number, foo : Type.String});
-        var ex = Example.create();
+        var Example = new Model({
+			id: Type.Number,
+			foo: Type.String,
+			boo: Type.String.extend({virtual: false}),
+			fnc: function () {}
+		});
 
+		var ex = Example.create();
         var keys = ex.propertyFilter({type: Type.Number});
-
         keys.should.have.length(1);
         keys.should.containEql('id');
+
+		keys = ex.propertyFilter({all: true});
+		keys.should.have.length(4);
+		keys.should.containEql('id', 'foo', 'boo', 'fnc');
     });
 
     it('create filtered serialized object', function () {
@@ -201,6 +209,34 @@ describe('Model:', function () {
 
         obj.should.have.keys('id');
     });
+
+	it('do not serialize virtual properties', function () {
+
+		var Example = new Model({
+			id : Type.Number.extend({optional:false}),
+			name : Type.String.extend({virtual:true}),
+			foo : function () {
+				return 'foo';
+			}
+		});
+
+		var ex = Example.create({id:1});
+		ex.name = 'test';
+		ex.serialized().should.containDeep({id:1});
+	});
+
+	it('correctly handle virtual property in serialized function', function () {
+		var Example = new Model({
+			id : Type.Number,
+			foo : Type.String.extend({virtual:true}),
+			fnc : function () { return 'fnc' }
+		});
+
+		var ex = Example.create();
+		ex.serialized().should.have.key('id').and.should.not.have.keys('foo', 'fnc');
+		ex.serialized(['id', 'foo']).should.have.keys('id', 'foo').and.should.not.have.key('fnc');
+		ex.serialized(['id', 'foo', 'fnc']).should.have.keys('id', 'foo', 'fnc');
+	});
 
     it('initialize model instance array', function () {
         var Example = new Model({id : Type.Number}, {transport: TestTransport});
