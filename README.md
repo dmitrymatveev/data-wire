@@ -25,8 +25,25 @@ representation on the client (consumer), allowing the said client to carry on wi
 		}
 	});
 
+	Jedi.setTransport(DataWire.Transport.extend({
+	    read: function (name) {
+	        //MySql/CouchDB/MongoDB/or other fancy data persistence layer you fancy
+	        return MyDataLayer.get(name).then(function (data) {
+	            // promises are awesome
+	            return {
+	                name: data.row.name
+	            }
+	        });
+	    }
+	}));
+
 	Jedi.find('Ben').then(function (jedi) {
-		// got your jedi here
+	    if (jedi) {
+	        jedi.fullName(); // 'Ben Kenobi'
+	    }
+	    else {
+	        return "he is a Force Ghost now, sorry"
+	    }
 	});
 	
 
@@ -48,6 +65,7 @@ Creates an instance of the Model definition.
 	* options.objectPool - Set custom object pool implementation .
 	* options.onInstanceInit - Called when new instance is created.
 	* options.onInstanceRevert - Called when instance is being reset to its default state.
+	* options.serializedRoot - Called when instances are serialized, giving a chance to modify it.
 	
 #### Model.clone([options])
 Creates a copy of this Model definition instance. Useful when same model might need to use different
