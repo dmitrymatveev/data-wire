@@ -13,33 +13,34 @@ for managing local and remote resources.
 In the spirit of simplicity this module does not provide implementations of the data transport layer or
 any sort of ORM apart from the bare bones object descriptor.
 
-Instead, Data Wire makes it possible to tie-in whichever data storage you may have into whatever data
-representation on the client (consumer), allowing the said client to carry on with its own business.
+Instead, Data Wire is storage agnostic middleware reducing the "glue" code needed between
+acquiring/processing data and sending it off to the next stage in the application stack.
 
+    // Provide the description of what it is we are dealing with.
 	var Jedi = new Model({
 		name : DataType.String,
 		surname : DataType.String.extend({defaultValue: 'Kenobi'})
-
-		fullName : function () {
-			return this.name +' '+ this.surname;
-		}
 	});
 
+    // Assign transport layer 'strategy' to the model.
 	Jedi.setTransport(DataWire.Transport.extend({
 	    read: function (name) {
 	        //MySql/CouchDB/MongoDB/or other fancy data persistence layer you fancy
 	        return MyDataLayer.get(name).then(function (data) {
 	            // promises are awesome
 	            return {
-	                name: data.row.name
+	                name: data.row.name,
+	                surname: data.row.surname
 	            }
 	        });
 	    }
 	}));
 
+    // Finally, fetch or create and proceed with your app logic
 	Jedi.find('Ben').then(function (jedi) {
 	    if (jedi) {
-	        jedi.fullName(); // 'Ben Kenobi'
+	        jedi.name; // 'Ben'
+	        jedi.surname; // 'Kenobi'
 	    }
 	    else {
 	        return "he is a Force Ghost now, sorry"
@@ -60,12 +61,13 @@ representation on the client (consumer), allowing the said client to carry on wi
 Creates an instance of the Model definition.
 
 * definition - A hash of [`DataTypes`](#DataType) defining a resource.
-* options
+* options - Adjust model behaviour.
 	* options.transport - Set custom transport.
 	* options.objectPool - Set custom object pool implementation .
 	* options.onInstanceInit - Called when new instance is created.
 	* options.onInstanceRevert - Called when instance is being reset to its default state.
-	* options.serializedRoot - Called when instances are serialized, giving a chance to modify it.
+	* options.serializedRoot - Called when instances are serialized, use it if you need custom wrapper
+	    to be applied to the return value.
 	
 #### Model.clone([options])
 Creates a copy of this Model definition instance. Useful when same model might need to use different
@@ -223,11 +225,14 @@ Invokes appropriate method in `Transport` and propagates returned `Promise` by s
 * meta {*} Anything that your transport implementation is expecting in place of the meta param.
 
 #### ModelInstance.revert()
-Undo all the changes made since the last call to `ModelInstance.commit` function.
+Undo all the changes made since the last known saved state. A call to `ModelInstance.commit`
+or `Mode.find` functions.
 
 #### ModelInstance.release()
-Resets this object to default values and stores the reference to it in the object pool for the current Model type.
-Not calling this function when exiting the scope will _not_ cause a memory leak when using default ObjectPool but instead allow GC to do its thing.
+Resets the state of this model instance and sends it back to the object pool to avoid instantiation
+of the new instances of the model.
+Not calling this function will result in eventual GC collection of the object.
+If you choose to not use object pool this function will essentially do nothing.
 
 #### ModelInstance.keys(dirty, type)
 **DEPRECATED** use `propertyFiler(filterObj)` instead
@@ -294,7 +299,10 @@ _Note_ : when resolving to a non-`null` in `update` or `create` function, the da
 <a name="ObjectPool" />
 ## ObjectPool
 ###### extends [`BaseObject`](#BaseObject)
-Instantiation of model instances could be a costly process due to the fact that properties defined in a Model are not bound the the prototype and instead are created on the fly. To reduce the overhead during runtime, Model stores a reference to the object pool for every Model definition and uses that to obtain previously created instances of an object.
+Instantiation of model instances could be a costly process due to the fact that properties defined
+in a Model are not bound the the prototype and instead are created on the fly.
+To reduce the overhead during runtime, Model stores a reference to the object pool for every
+Model definition and uses that to obtain previously created instances of an object.
 
 * ObjectPool.extend(obj) : {ObjectPool}
 
