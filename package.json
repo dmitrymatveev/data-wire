@@ -1,28 +1,32 @@
 {
-    "name": "data-wire",
-    "version": "0.3.0",
-    "description": "Json Api data abstraction layer.",
-    "keywords": [
-        "nodejs",
+	"name": "data-wire",
+	"version": "0.3.0",
+	"description": "Json Api data abstraction layer.",
+	"keywords": [
+		"nodejs",
 		"json api",
 		"server",
-        "data",
-        "layer",
-        "abstraction"
-    ],
-    "main": "lib/index.js",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/dmitrymatveev/data-wire"
-    },
-    "scripts": {
-        "test": "mocha test"
-    },
-    "author": "Dmitry Matveev",
-    "license": "MIT",
-    "dependencies": {},
-    "devDependencies": {
-        "mocha": "~2.0.1",
-        "should": "^5.2.0"
-    }
+		"data",
+		"layer",
+		"abstraction"
+	],
+	"main": "lib/index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/dmitrymatveev/data-wire"
+	},
+	"scripts": {
+		"test": "mocha test"
+	},
+	"author": "Dmitry Matveev",
+	"license": "MIT",
+	"dependencies": {
+		"pluralize": "^1.2.1"
+	},
+	"devDependencies": {
+		"mocha": "~2.0.1",
+		"restify": "^4.0.3",
+		"morgan": "^1.6.1",
+		"should": "^5.2.0"
+	}
 }
