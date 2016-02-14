@@ -1,30 +1,10 @@
 "use strict";
 
 var dw = require('../index');
-var restify = require('restify');
+var morgan  = require('morgan');
+var RestifyServer = dw.implementation.RestifyServer;
 
-class Server extends dw.ServerInterface {
-	constructor() {
-		super();
-		this.server = restify.createServer({});
-	}
-
-	start() {
-		var morgan  = require('morgan');
-		this.server.use(morgan('dev'));
-
-		this.server.listen(8080, () => {
-			console.log('%s listening at %s', this.server.name, this.server.url);
-		});
-	}
-
-	GET(params, callback) {this.server.get(params, callback)};
-	POST(params, callback) {this.server.post(params, callback)};
-	PATCH(params, callback) {this.server.patch(params, callback)};
-	DELETE(params, callback) {this.server.del(params, callback)};
-}
-
-class Transport extends dw.TransportInterface {
+class Transport extends dw.ResourceControllerInterface {
 	constructor() {
 		super();
 		this.db = require('./database');
@@ -46,80 +26,30 @@ class Transport extends dw.TransportInterface {
 	}
 }
 
-class Review extends dw.Resource {
-	constructor() {
-		super({
-			text: dw.attributes.Data,
-			//records: dw.attributes.Relationship.ToOne
-		});
-	}
-}
+let Router = dw.DataWire.getRouter();
 
-class Author extends dw.Resource {
-	constructor() {
-		super({
-			name: dw.attributes.Data,
-			//records: dw.attributes.Relationship.ToMany
-		});
-	}
-}
+var Review = Router.resource('Review', {
+	text: dw.attributes.Data,
+	book: dw.attributes.Relationship.ToOne
+});
 
-var Book = new dw.Resource(
-	'Book',
-	{
-		name: dw.attributes.Data,
-		author: dw.attributes.Relationship.ToOne,
-		reviews: {attr: dw.attributes.Relationship.ToMany, params: {}}
-	},
-	{
-		transports: {
-			resource: new Transport(),
-			relationship: new Transport()
-		}
-	}
-);
+var Author = Router.resource('Author', {
+	name: dw.attributes.Data,
+	books: dw.attributes.Relationship.ToMany
+});
 
-var router = new dw.Router();
-router.use(Book);
-router.use(new Author());
-router.use(new Review());
+var Book = Router.resource('Book', {
+	name: dw.attributes.Data,
+	author: dw.attributes.Relationship.ToOne,
+	reviews: {attr: dw.attributes.Relationship.ToMany, params: {}}
+});
 
-var server = new Server();
-server.use(router);
-server.start();
+dw.DataWire.setGlobalController(new Transport());
 
-var list = listAllRoutes(server.server);
-console.log(list);
+var restify = new RestifyServer();
+restify.server.use(morgan('dev'));
 
-function listAllRoutes(server){
-	var res = '';
-	var text = [];
-	var print = function (header) {
-		text.sort();
-		text = [header].concat(text);
-		console.log(text.join('\n'));
-		text = [];
-	};
-
-	server.router.routes.GET.forEach(function(value) {
-		text.push(`GET /${value.spec.path}`);
-	});
-	print('== GET ==');
-
-	server.router.routes.POST.forEach(function(value) {
-		text.push(`POST /${value.spec.path}`);
-	});
-	print('== POST ==');
-
-	server.router.routes.PATCH.forEach(function(value) {
-		text.push(`patch /${value.spec.path}`);
-	});
-	print('== PATCH ==');
-
-	server.router.routes.DELETE.forEach(function(value) {
-		text.push(`DEL /${value.spec.path}`);
-	});
-	print('== DELETE ==');
-
-	return res;
-}
+dw.DataWire.build(server);
+restify.server.listen(8080, () => {
+	console.log('%s listening at %s', restify.server.name, restify.server.url);
+});
