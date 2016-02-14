@@ -49,7 +49,7 @@ dw.DataWire.setGlobalController(new Transport());
 var restify = new RestifyServer();
 restify.server.use(morgan('dev'));
 
-dw.DataWire.build(server);
+dw.DataWire.build(restify);
 restify.server.listen(8080, () => {
 	console.log('%s listening at %s', restify.server.name, restify.server.url);
 });
