@@ -21,6 +21,7 @@
 	"author": "Dmitry Matveev",
 	"license": "MIT",
 	"dependencies": {
+		"memory-cache": "^0.1.4",
 		"pluralize": "^1.2.1"
 	},
 	"devDependencies": {

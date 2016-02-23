@@ -1,7 +1,7 @@
 "use strict";
 
 var DataWire = require('./lib/DataWire');
-var ResourceControllerInterface = require('./lib/ResourceControllerInterface');
+var AbstractResourceController = require('./lib/AbstractResourceController');
 var AbstractHttpTransport = require('./lib/AbstractHttpTransport');
 
 var Data = require('./lib/attributes/Data');
@@ -9,7 +9,7 @@ var Relationship = require('./lib/attributes/Relationship');
 
 module.exports = {
 	DataWire,
-	ResourceControllerInterface,
+	AbstractResourceController,
 	AbstractHttpTransport,
 
 	attributes: {

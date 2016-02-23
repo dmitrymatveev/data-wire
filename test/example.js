@@ -4,7 +4,7 @@ var dw = require('../index');
 var morgan  = require('morgan');
 var RestifyServer = dw.implementation.RestifyServer;
 
-class Transport extends dw.ResourceControllerInterface {
+class Transport extends dw.AbstractResourceController {
 	constructor() {
 		super();
 		this.db = require('./database');
@@ -12,11 +12,12 @@ class Transport extends dw.ResourceControllerInterface {
 
 	find(type, id, options, next) {
 		next(null, {
-			data: [{
-				id: "record:1",
-				name: "First Record",
-				author: "author:1"
-			}],
+			data: {
+				id: "book:1",
+				name: "First Book",
+				author: "author:1",
+				reviews: ['review:1', 'review:2']
+			},
 			included: [{
 				id: "author:1",
 				name: "Smith",
@@ -28,8 +29,6 @@ class Transport extends dw.ResourceControllerInterface {
 
 let Router = dw.DataWire.getRouter();
 
-Router.queryParams.setIncludeRelated(true);
-
 var Review = Router.resource('Review', {
 	text: dw.attributes.Data,
 	book: dw.attributes.Relationship.ToOne
@@ -37,7 +36,8 @@ var Review = Router.resource('Review', {
 
 var Author = Router.resource('Author', {
 	name: dw.attributes.Data,
-	books: dw.attributes.Relationship.ToMany
+	books: dw.attributes.Relationship.ToMany,
+	reviews: dw.attributes.Relationship.ToMany
 });
 
 var Book = Router.resource('Book', {
@@ -46,11 +46,15 @@ var Book = Router.resource('Book', {
 	reviews: dw.attributes.Relationship.ToMany
 });
 
-dw.DataWire.setGlobalController(new Transport());
+var transport = new Transport();
+transport.queryParams.setIncludeRelated(true);
+
+dw.DataWire.setGlobalController(transport);
 
 var restify = new RestifyServer();
 restify.server.use(morgan('dev'));
 dw.DataWire.build(restify);
-restify.server.listen(8080, () => {
+//console.log(restify.toString());
+restify.server.listen(8888, () => {
 	console.log('%s listening at %s', restify.server.name, restify.server.url);
 });
