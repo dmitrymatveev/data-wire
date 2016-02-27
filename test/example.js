@@ -28,6 +28,7 @@ class Transport extends dw.AbstractResourceController {
 }
 
 let Router = dw.DataWire.getRouter();
+Router.queryParams.setIncludeRelated(true);
 
 var Review = Router.resource('Review', {
 	text: dw.attributes.Data,
@@ -47,13 +48,13 @@ var Book = Router.resource('Book', {
 });
 
 var transport = new Transport();
-transport.queryParams.setIncludeRelated(true);
 
 dw.DataWire.setGlobalController(transport);
 
 var restify = new RestifyServer();
 restify.server.use(morgan('dev'));
 dw.DataWire.build(restify);
+
 //console.log(restify.toString());
 restify.server.listen(8888, () => {
 	console.log('%s listening at %s', restify.server.name, restify.server.url);
