@@ -16,12 +16,13 @@ class Transport extends dw.AbstractResourceController {
 				id: "book:1",
 				name: "First Book",
 				author: "author:1",
-				reviews: ['review:1', 'review:2']
+				//reviews: ['review:1', 'review:2']
 			},
 			included: [{
+				type: "author",
 				id: "author:1",
 				name: "Smith",
-				records: ['record:1', 'record:2']
+				books: ['book:1', 'book:2']
 			}]
 		})
 	}
@@ -29,6 +30,7 @@ class Transport extends dw.AbstractResourceController {
 
 let Router = dw.DataWire.getRouter();
 Router.queryParams.setIncludeRelated(true);
+Router.links.setGenerateLinks(true);
 
 var Review = Router.resource('Review', {
 	text: dw.attributes.Data,
@@ -55,7 +57,8 @@ var restify = new RestifyServer();
 restify.server.use(morgan('dev'));
 dw.DataWire.build(restify);
 
-//console.log(restify.toString());
+console.log(restify.toString());
+
 restify.server.listen(8888, () => {
 	console.log('%s listening at %s', restify.server.name, restify.server.url);
 });
