@@ -16,8 +16,12 @@ class Transport extends dw.AbstractResourceController {
 				id: "book:1",
 				name: "First Book",
 				author: "author:1",
-				about: ['footnote:1']
-				//reviews: ['review:1', 'review:2']
+				//about: ['footnote:1'],
+				about: {data: 'footnote:1', meta: {foo: 'boo'}},
+				reviews: {meta: {count: 2}, data: ['review:1', 'review:2']},
+				meta: {
+					foo: 'boo'
+				}
 			},
 			included: [{
 				type: "author",
@@ -31,7 +35,8 @@ class Transport extends dw.AbstractResourceController {
 
 let Router = dw.DataWire.getRouter();
 Router.queryParams.setIncludeRelated(true);
-Router.links.setGenerateLinks(false);
+Router.links.setIncludeSelfLinks(true);
+Router.links.setIncludeRelationLinks(true);
 
 var Review = Router.resource('Review', {
 	text: dw.attributes.Data,
